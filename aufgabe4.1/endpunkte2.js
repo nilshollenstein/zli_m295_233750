@@ -17,8 +17,6 @@ function getCurrentTimeInTimezone(timezone) {
 	return formattedTime;
 }
 
-app.use(express.urlencoded({ extended: true }));
-
 app.get('/now', (req, res) => {
 	const defaultTimezone = 'UTC';
 
@@ -30,6 +28,7 @@ app.get('/now', (req, res) => {
 });
 let namesList = [];
 
+app.use(express.urlencoded({ extended: true }));
 app.post('/names', (req, res) => {
 	namesList.push(req.body.name);
 
