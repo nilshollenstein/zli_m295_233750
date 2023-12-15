@@ -132,6 +132,8 @@ app.post('/books', (req, res) => {
 });
 app.post('/lends', (req, res) => {
 	let checkISBN = req.body.isbn;
+	//Filter mithilfe von ChatGPT
+
 	const userLends = lends.filter(
 		(lend) =>
 			lend.customer_id === req.body.customer_id && lend.returned_at === ''
@@ -147,14 +149,11 @@ app.post('/lends', (req, res) => {
 	) {
 		console.log(422);
 		return res.status(422).send();
-	}
-	//Filter mithilfe von ChatGPT
-	else if (userLends.length >= 3) {
+	} else if (userLends.length >= 3) {
 		console.log(403);
 		return res.status(403).send('Nutzer hat bereits drei Ausleihen');
 	} else if (lends.some((lend) => lend.isbn === checkISBN)) {
 		const lendWithISBN = lends.find((lend) => lend.isbn === checkISBN);
-
 		if (lendWithISBN.returned_at === '') {
 			console.log(409);
 			return res.status(409).send('Conflict: Book is not returned yet.');
