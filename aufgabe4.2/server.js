@@ -69,43 +69,7 @@ let books = [
 	},
 ];
 
-let lends = [
-	{
-		id: '1',
-		customer_id: '4528',
-		isbn: '9780345803481',
-		borrowed_at: '12.03.2012',
-		returned_at: '12.04.2012',
-	},
-	{
-		id: '2',
-		customer_id: '7890',
-		isbn: '9780061120084',
-		borrowed_at: '15.05.2013',
-		returned_at: '25.05.2013', // Hinzugefügt
-	},
-	{
-		id: '3',
-		customer_id: '1234',
-		isbn: '9781400033423',
-		borrowed_at: '22.08.2014',
-		returned_at: '',
-	},
-	{
-		id: '4',
-		customer_id: '5678',
-		isbn: '9780743273565',
-		borrowed_at: '01.01.2015',
-		returned_at: '15.01.2015', // Hinzugefügt
-	},
-	{
-		id: '5',
-		customer_id: '9012',
-		isbn: '9780062315007',
-		borrowed_at: '10.06.2016',
-		returned_at: '',
-	},
-];
+let lends = [];
 
 app.get('/books', (req, res) => {
 	res.send(books);
@@ -134,7 +98,7 @@ app.post('/lends', (req, res) => {
 	let checkISBN = req.body.isbn;
 	//Filter mithilfe von ChatGPT
 
-	const userLends = lends.filter(
+	let userLends = lends.filter(
 		(lend) =>
 			lend.customer_id === req.body.customer_id && lend.returned_at === ''
 	);
@@ -149,20 +113,23 @@ app.post('/lends', (req, res) => {
 	) {
 		console.log(422);
 		return res.status(422).send();
+		//If für die Prüfung, ob ein Nutzer bereits drei Ausleihen hat
 	} else if (userLends.length >= 3) {
 		console.log(403);
 		return res.status(403).send('Nutzer hat bereits drei Ausleihen');
+	//If für die Überprüfung ob das Buch bereits ausgeliehen ist
 	} else if (lends.some((lend) => lend.isbn === checkISBN)) {
 		const lendWithISBN = lends.find((lend) => lend.isbn === checkISBN);
 		if (lendWithISBN.returned_at === '') {
 			console.log(409);
-			return res.status(409).send('Conflict: Book is not returned yet.');
+			return res.status(409).send('Buch ist noch nicht Zurückgegeben');
 		}
 	} else {
 		lends.push(req.body);
 		console.log(lends);
 		return res.status(201).send(lends);
 	}
+	userLends = [];
 });
 
 app.put('/books/:isbn', (req, res) => {

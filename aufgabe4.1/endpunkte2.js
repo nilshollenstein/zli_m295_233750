@@ -27,7 +27,7 @@ app.get('/now', (req, res) => {
 	res.send(`Aktuelle Zeit: ${currentTime}`);
 });
 let namesList = [];
-
+//Middleware um JSON zu nutzen
 app.use(express.urlencoded({ extended: true }));
 app.post('/names', (req, res) => {
 	namesList.push(req.body.name);
